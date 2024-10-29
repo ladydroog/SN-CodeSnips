@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-29 22:25:31">
+<sys_script_client action="INSERT_OR_UPDATE">
+<active>true</active>
+<applies_extended>false</applies_extended>
+<condition/>
+<description/>
+<field>cmdb_ci</field>
+<global>true</global>
+<isolate_script>true</isolate_script>
+<messages/>
+<name>Populate Location from CI</name>
+<order/>
+<script><![CDATA[function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+   g_form.getReference('cmdb_ci', addLocation);
+   if (isLoading || newValue === '') {
+      return;
+   }
+
+function addLocation(cmdb_ci) {
+	if (cmdb_ci.getValue('location') != '') {
+		var ciLoc = cmdb_ci.location;
+		g_form.setValue('location', ciLoc);
+	}
+}
+   
+}]]></script>
+<sys_class_name>sys_script_client</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2024-04-08 17:54:24</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>1fabf37387554e900f1ab8c7cebb3582</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_name>Populate Location from CI</sys_name>
+<sys_overrides display_value=""/>
+<sys_package display_value="Global" source="global">global</sys_package>
+<sys_policy/>
+<sys_scope display_value="Global">global</sys_scope>
+<sys_update_name>sys_script_client_1fabf37387554e900f1ab8c7cebb3582</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2024-04-08 17:54:24</sys_updated_on>
+<table>change_request</table>
+<type>onChange</type>
+<ui_type>10</ui_type>
+<view/>
+</sys_script_client>
+</unload>
