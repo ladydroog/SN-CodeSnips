@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-29 22:46:17">
+<sys_script_fix action="INSERT_OR_UPDATE">
+<before>false</before>
+<description>Remove Inactive Users from Groups Retroactively</description>
+<name>Remove Inactive Users from Groups</name>
+<record_for_rollback>true</record_for_rollback>
+<script><![CDATA[(function () {
+
+	/*************************************** */
+    /**/ var commitFlag = true; // Set this flag to true to DELETE records (instead of running a simulation)
+	/*************************************** */
+
+
+    var totalInactiveUsers = 0; // Total count of inactive users found
+    var totalInactiveUsersWithGroupsDeleted = 0; // Total count of inactive users with groups deleted
+    var totalInactiveUsersWithNoGroupsDeleted = 0; // Total count of inactive users with 0 groups deleted
+
+    // Create a GlideRecord query for inactive users in the sys_user table
+    var grUser = new GlideRecord('sys_user');
+    grUser.addQuery('active', false);
+    grUser.query();
+	totalInactiveUsers = grUser.getRowCount();
+    if (totalInactiveUsers > 0) {
+        while (grUser.next()) {
+            var userId = grUser.sys_id;
+            var groupsDeleted = 0; // Count of groups deleted for the current inactive user
+
+            // Create a GlideRecord query for all group references of the inactive user
+            var grMember = new GlideRecord('sys_user_grmember');
+            grMember.addQuery('user', userId);
+            grMember.query();
+
+            if (grMember.getRowCount() > 0) {
+                while (grMember.next()) {
+                    if (commitFlag) {
+                        grMember.deleteRecord(); // Delete the group reference record
+                        groupsDeleted++;
+                    }
+                }
+            }
+
+            if (commitFlag) {
+                gs.info(
+                    'User ' + grUser.getDisplayValue() + ' is inactive. ' +
+                    groupsDeleted + ' group(s) deleted.'
+                );
+
+                if (groupsDeleted > 0) {
+                    totalInactiveUsersWithGroupsDeleted++;
+                } else {
+                    totalInactiveUsersWithNoGroupsDeleted++;
+                }
+            } else {
+                
+
+                if (groupsDeleted > 0) {
+                    totalInactiveUsersWithGroupsDeleted++;
+                } else {
+                    totalInactiveUsersWithNoGroupsDeleted++;
+                }
+            }
+        }
+
+        if (!commitFlag) {
+            gs.info('Fix script executed in simulation mode. No records were deleted.');
+            gs.info('Total inactive users found: ' + totalInactiveUsers);
+            gs.info('Total inactive users with groups deleted: ' + totalInactiveUsersWithGroupsDeleted);
+            gs.info('Total inactive users with 0 groups deleted: ' + totalInactiveUsersWithNoGroupsDeleted);
+        } else {
+            gs.info('Fix script executed successfully. All group references for inactive users are deleted.');
+            gs.info('Total inactive users found: ' + totalInactiveUsers);
+            gs.info('Total inactive users with groups deleted: ' + totalInactiveUsersWithGroupsDeleted);
+            gs.info('Total inactive users with 0 groups deleted: ' + totalInactiveUsersWithNoGroupsDeleted);
+        }
+    } else {
+        gs.info('No inactive users found.');
+    }
+})();
+]]></script>
+<sys_class_name>sys_script_fix</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2023-09-10 15:12:57</sys_created_on>
+<sys_id>b5b1fccc979d711024a5b44de053afb7</sys_id>
+<sys_mod_count>13</sys_mod_count>
+<sys_name>Remove Inactive Users from Groups</sys_name>
+<sys_package display_value="Global" source="global">global</sys_package>
+<sys_policy/>
+<sys_scope display_value="Global">global</sys_scope>
+<sys_update_name>sys_script_fix_b5b1fccc979d711024a5b44de053afb7</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2024-01-15 21:17:07</sys_updated_on>
+<unloadable>false</unloadable>
+</sys_script_fix>
+</unload>
