@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-29 23:29:39">
+<sys_script action="INSERT_OR_UPDATE">
+<abort_action>false</abort_action>
+<access>package_private</access>
+<action_delete>false</action_delete>
+<action_insert>false</action_insert>
+<action_query>false</action_query>
+<action_update>true</action_update>
+<active>true</active>
+<add_message>false</add_message>
+<advanced>true</advanced>
+<change_fields>false</change_fields>
+<client_callable>false</client_callable>
+<collection>kb_knowledge</collection>
+<condition/>
+<description/>
+<execute_function>false</execute_function>
+<filter_condition table="kb_knowledge">valid_toVALCHANGES^EQ<item goto="false" or="false" field="valid_to" endquery="false" value="" operator="VALCHANGES" newquery="false"/>
+<item goto="false" or="false" field="" endquery="true" value="" operator="=" newquery="false"/>
+</filter_condition>
+<is_rest>false</is_rest>
+<message/>
+<name>Abort on Over Extended Valid To Date</name>
+<order>100</order>
+<priority>100</priority>
+<rest_method display_value=""/>
+<rest_method_text/>
+<rest_service display_value=""/>
+<rest_service_text/>
+<rest_variables/>
+<role_conditions/>
+<script><![CDATA[(function executeRule(current, previous /*null when async*/ ) {
+
+    // Get the original and current Valid to dates
+	var oldDate = new GlideDateTime(previous.valid_to);
+	var newDate = new GlideDateTime(current.valid_to);
+    //gs.log("RLM: old date value is " + oldDate.getValue());
+	//gs.log("RLM: new date value is " + newDate.getValue());
+
+    // Calculate date limits, IT Staff valid 2 years, all else 1 year
+    var limitDate;
+    if (current.kb_knowledge_base == gs.getProperty('kb_knowledge.it_staff_knowledge')) {
+        // If the knowledge base is IT Staff Knowledge Base, set limit to 2 years
+        //gs.log("RLM: IT Staff Knowledge matched");
+		limitDate = new GlideDateTime(oldDate);
+        limitDate.addYears(2);
+		//gs.log("RLM: IT Staff Knowledge match, new valid to limit is " + limitDate);
+    } else {
+        // For all other Knowledge Bases, set limit to 1 year
+		//gs.log("RLM: Not IT Staff Knowledge");
+        limitDate = new GlideDateTime(oldDate);
+        limitDate.addYears(1);
+		//gs.log("RLM: Other Knowledge, new valid to limit is " + limitDate);
+    }
+
+    // Compare the new Valid to date with the calculated limit date
+    if (newDate > limitDate) {
+        // Set back to previous value and display error
+        current.valid_to = previous.valid_to;
+        var errorMessage = (current.kb_knowledge_base == gs.getProperty('kb_knowledge.it_staff_knowledge')) ?
+            'The new Valid to date for IT Staff articles cannot exceed more than TWO years.' :
+            'The new Valid to date for articles in this Knowledge Base cannot exceed more than ONE year.';
+        current.setAbortAction(true); // Abort the update action
+        gs.addErrorMessage(errorMessage);
+    }
+
+})(current, previous);]]></script>
+<sys_class_name>sys_script</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2024-08-29 02:57:25</sys_created_on>
+<sys_domain>global</sys_domain>
+<sys_domain_path>/</sys_domain_path>
+<sys_id>189285bd3b905210ee11571864e45a3a</sys_id>
+<sys_mod_count>5</sys_mod_count>
+<sys_name>Abort on Over Extended Valid To Date</sys_name>
+<sys_overrides display_value=""/>
+<sys_package display_value="Global" source="global">global</sys_package>
+<sys_policy/>
+<sys_scope display_value="Global">global</sys_scope>
+<sys_update_name>sys_script_189285bd3b905210ee11571864e45a3a</sys_update_name>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2024-08-29 03:59:53</sys_updated_on>
+<template/>
+<when>before</when>
+</sys_script>
+</unload>
