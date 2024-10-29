@@ -26,7 +26,7 @@ GetNextCABMeeting.prototype = Object.extendsObject(AbstractAjaxProcessor, {
     type: 'GetNextCABMeeting'
 });]]></script>
 <sys_class_name>sys_script_include</sys_class_name>
-<sys_created_by>rmaza@kinetik.com</sys_created_by>
+<sys_created_by>ladydroog</sys_created_by>
 <sys_created_on>2024-08-05 15:55:40</sys_created_on>
 <sys_id>f7771c9a877382100f1ab8c7cebb35d9</sys_id>
 <sys_mod_count>5</sys_mod_count>
@@ -35,7 +35,7 @@ GetNextCABMeeting.prototype = Object.extendsObject(AbstractAjaxProcessor, {
 <sys_policy/>
 <sys_scope display_value="Global">global</sys_scope>
 <sys_update_name>sys_script_include_f7771c9a877382100f1ab8c7cebb35d9</sys_update_name>
-<sys_updated_by>rmaza@kinetik.com</sys_updated_by>
+<sys_updated_by>ladydroog</sys_updated_by>
 <sys_updated_on>2024-08-05 18:29:49</sys_updated_on>
 </sys_script_include>
 </unload>
